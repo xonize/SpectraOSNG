@@ -55,7 +55,7 @@ kernel:
 libk:
 	$(MAKE) -C libc
 
-$(IMAGE_NAME).iso: limine kernel
+$(IMAGE_NAME).iso: limine kernel libk
 	rm -rf iso_root
 	mkdir -p iso_root
 	cp -v kernel/kernel.elf \
