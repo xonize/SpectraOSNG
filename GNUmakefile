@@ -1,5 +1,6 @@
 # Nuke built-in rules and variables.
 override MAKEFLAGS += -rR
+export OS_CC="x86_64-elf-gcc"
 
 override IMAGE_NAME := spectraos
 
@@ -47,9 +48,12 @@ limine:
 	git clone https://github.com/limine-bootloader/limine.git --branch=v5.x-branch-binary --depth=1
 	unset CC; unset CFLAGS; unset CPPFLAGS; unset LDFLAGS; unset LIBS; $(MAKE) -C limine CC="$(HOST_CC)"
 
-.PHONY: kernel
+.PHONY: kernel libk
 kernel:
 	$(MAKE) -C kernel
+
+libk:
+	$(MAKE) -C libc
 
 $(IMAGE_NAME).iso: limine kernel
 	rm -rf iso_root
@@ -82,6 +86,7 @@ $(IMAGE_NAME).hdd: limine kernel
 clean:
 	rm -rf iso_root $(IMAGE_NAME).iso $(IMAGE_NAME).hdd
 	$(MAKE) -C kernel clean
+	$(MAKE) -C libc clean
 
 .PHONY: distclean
 distclean: clean

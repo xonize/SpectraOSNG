@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <limine.h>
+#include <include/kernel/test.h>
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
@@ -90,9 +91,11 @@ void _start(void) {
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
     // Note: we assume the framebuffer model is RGB with 32-bit pixels.
-    for (size_t i = 0; i < 100; i++) {
+    if (HELLO) {
+        for (size_t i = 0; i < 100; i++) {
         uint32_t *fb_ptr = framebuffer->address;
         fb_ptr[i * (framebuffer->pitch / 4) + i] = 0xffffff;
+    }
     }
 
     // We're done, just hang...

@@ -1,29 +1,13 @@
-# Nuke built-in rules and variables.
-override MAKEFLAGS += -rR
-
-# This is the name that our final kernel executable will have.
-# Change as needed.
-override KERNEL := kernel.elf
-
-# Convenience macro to reliably declare user overridable variables.
-define DEFAULT_VAR =
-    ifeq ($(origin $1),default)
-        override $(1) := $(2)
-    endif
-    ifeq ($(origin $1),undefined)
-        override $(1) := $(2)
-    endif
-endef
-
-# It is suggested to use a custom built cross toolchain to build a kernel.
-# We are using the standard "cc" here, it may work by using
-# the host system's toolchain, but this is not guaranteed.
 override DEFAULT_CC := $(OS_CC)
 $(eval $(call DEFAULT_VAR,CC,$(DEFAULT_CC)))
 
 # Same thing for "ld" (the linker).
 override DEFAULT_LD := x86_64-elf-ld
 $(eval $(call DEFAULT_VAR,LD,$(DEFAULT_LD)))
+
+# Same thing for "ar" (the archiver).
+override DEFAULT_LD := x86_64-elf-ar
+$(eval $(call DEFAULT_VAR,AR,$(DEFAULT_AR)))
 
 # User controllable C flags.
 override DEFAULT_CFLAGS := -g -O2 -pipe
@@ -90,37 +74,39 @@ override NASMFILES := $(shell find -L . -type f -name '*.asm')
 override OBJ := $(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o)
 override HEADER_DEPS := $(CFILES:.c=.c.d) $(ASFILES:.S=.S.d)
 
-# Default target.
-.PHONY: all
-all: $(KERNEL)
+CPPFLAGS:=$(CPPFLAGS) -D__is_libc -Iinclude
+LIBK_CFLAGS:=$(CFLAGS) -D__is_libk
+LIBK_CPPFLAGS:=$(CPPFLAGS) -D__is_libk
 
-limine.h:
-	curl -Lo $@ https://github.com/limine-bootloader/limine/raw/trunk/limine.h
+FREEOBJS=\
+stdio/printf.o \
 
-# Link rules for the final kernel executable.
-$(KERNEL): GNUmakefile linker.ld $(OBJ)
-	$(LD) $(OBJ) $(LDFLAGS) -o $@
+LIBK_OBJS:=$(FREEOBJS:.o=.libk.o)
 
-# Include header dependencies.
--include $(HEADER_DEPS)
+BINARIES=libk.a
 
-# Compilation rules for *.c files.
-%.c.o: %.c GNUmakefile limine.h
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+.PHONY: all clean
+.SUFFIXES: .o .libk.o .c .S .asm
 
-# Compilation rules for *.S files.
-%.S.o: %.S GNUmakefile limine.h
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+all: $(BINARIES)
 
-# Compilation rules for *.asm (nasm) files.
-%.asm.o: %.asm GNUmakefile
-	nasm $(NASMFLAGS) $< -o $@
+libk.a: $(LIBK_OBJS)
+	$(AR) rcs $@ $(LIBK_OBJS)
+    $(info COMPILED LIBK)
 
-# Remove object files and the final executable.
-.PHONY: clean
+.c.o:
+	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
+
+.c.S:
+	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+
+.c.libk.o:
+	$(CC) -MD -c $< -o $@ -std=gnu11 $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+
+.S.libk.o:
+	$(CC) -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+
 clean:
-	rm -rf $(KERNEL) $(OBJ) $(HEADER_DEPS)
-
-.PHONY: distclean
-distclean: clean
-	rm -f limine.h
+	rm -f $(BINARIES) *.a
+	rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
+	rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
