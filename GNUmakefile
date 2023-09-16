@@ -1,6 +1,6 @@
 # Nuke built-in rules and variables.
 override MAKEFLAGS += -rR
-export OS_CC="x86_64-elf-gcc"
+export OS_CC=x86_64-elf-gcc --sysroot="sysroot"
 
 override IMAGE_NAME := spectraos
 
