@@ -3,7 +3,7 @@
 #include <stdint.h>
 // #include <string.h>
 #include <include/logo.h>
-#include <tty.h>
+#include <include/tty.h>
 
 static uint32_t WIDTH = 1280;
 static uint32_t HEIGHT = 720;
@@ -13,6 +13,8 @@ static uint32_t PITCH; // number of bytes that are in each row on screen
 static uint8_t FBTYPE; // color type/mode of framebuffer
 static uint32_t s_color; // default color
 static volatile void* fb;
+
+int calculate_offset(int x, int y);
 
 
 void screen_init(void* addr, uint32_t width, uint32_t height, uint32_t pitch, uint8_t bpp, uint8_t colormode) {
@@ -44,4 +46,8 @@ void screen_draw_img(char* data, uint32_t x, uint32_t y) {
 void screen_put_pixel(uint32_t x, uint32_t y, uint32_t color) {
     uint32_t* pixel = fb + calculate_offset(x, y);
     *pixel = (color & 0xffffff) | (*pixel & 0xff000000);
+}
+
+int calculate_offset(int x, int y) {
+    return (x * DEPTH/8) + y * PITCH;
 }

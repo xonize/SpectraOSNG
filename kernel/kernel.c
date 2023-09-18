@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <limine.h>
-#include <tty.h>
+#include <include/tty.h>
 #include <include/kernel/test.h>
-#include <logo.h>
+#include <include/logo.h>
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
