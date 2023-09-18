@@ -33,10 +33,12 @@ void screen_draw_img(char* data, uint32_t x, uint32_t y) {
     for (uint32_t yy=0;yy<logo_height;yy++) {
         for (uint32_t xx=0;xx<logo_width;xx++) {
             HEADER_PIXEL(data, pixel);
+            // 0 = Red, 1 = Green, 2 = Blue
             pixel[3] = 0;
-            uint32_t num = (uint32_t) pixel[0] << 24 |
-                (uint32_t)pixel[1] << 16 |
-                (uint32_t)pixel[2] << 8  |
+            // Num 
+            uint32_t num = (uint32_t) pixel[0] << 16 |
+                (uint32_t)pixel[1] << 8 |
+                (uint32_t)pixel[2]  |
                 (uint32_t)pixel[3];
             screen_put_pixel(x+xx, y+yy, num);
         }
