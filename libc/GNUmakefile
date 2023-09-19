@@ -75,6 +75,7 @@ override OBJ := $(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o)
 override HEADER_DEPS := $(CFILES:.c=.c.d) $(ASFILES:.S=.S.d)
 
 HEADERSDIR?=
+LIBSDIR?=
 
 CPPFLAGS:=$(CPPFLAGS) -D__is_libc -Iinclude
 LIBK_CFLAGS:=$(CFLAGS) -D__is_libk
@@ -87,17 +88,19 @@ LIBK_OBJS:=$(FREEOBJS:.o=.libk.o)
 
 BINARIES=libk.a
 
-.PHONY: all clean install-headers
+.PHONY: all clean install-headers install-libs
 .SUFFIXES: .o .libk.o .c .S .asm
 
 all: $(BINARIES)
 
 install-headers:
-    cp -R --preserve=timestamps include/. $(HEADERSDIR)
+	cp -R --preserve=timestamps include/. $(HEADERSDIR)
+
+install-libs:
+	cp -R --preserve=timestamps $(BINARIES) $(LIBSDIR)
 
 libk.a: $(LIBK_OBJS)
 	$(DEFAULT_AR) rcs $@ $(LIBK_OBJS)
-    $(info COMPILED LIBK)
 
 .c.o:
 	$(DEFAULT_CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)

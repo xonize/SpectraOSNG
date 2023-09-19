@@ -2,8 +2,8 @@
 #include <stddef.h>
 #include <stdint.h>
 // #include <string.h>
-#include <include/logo.h>
-#include <include/tty.h>
+#include <logo.h>
+#include <tty.h>
 
 static uint32_t WIDTH = 1280;
 static uint32_t HEIGHT = 720;

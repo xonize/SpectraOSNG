@@ -90,9 +90,14 @@ override NASMFILES := $(shell find -L . -type f -name '*.asm')
 override OBJ := $(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o)
 override HEADER_DEPS := $(CFILES:.c=.c.d) $(ASFILES:.S=.S.d)
 
+
+HEADERSDIR?=
 # Default target.
-.PHONY: all
+.PHONY: all install-headers
 all: $(KERNEL)
+
+install-headers:
+	cp -R --preserve=timestamps include/. $(HEADERSDIR)
 
 limine.h:
 	curl -Lo $@ https://github.com/limine-bootloader/limine/raw/trunk/limine.h
