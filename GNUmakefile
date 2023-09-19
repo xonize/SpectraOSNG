@@ -5,8 +5,9 @@ export SP_SYSROOT=$(shell pwd)/sysroot
 override IMAGE_NAME := spectraos
 export HEADERSDIR=$(SP_SYSROOT)/usr/include/
 export LIBSDIR=$(SP_SYSROOT)/usr/lib/
+export INCDIR=/usr/include
 
-export OS_CC=x86_64-elf-gcc --sysroot=$(SP_SYSROOT) -isystem=$(HEADERSDIR)
+export OS_CC=x86_64-elf-gcc --sysroot=$(SP_SYSROOT) -isystem=$(INCDIR)
 
 # Convenience macro to reliably declare user overridable variables.
 define DEFAULT_VAR =
