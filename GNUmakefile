@@ -3,6 +3,7 @@ override MAKEFLAGS += -rR
 export OS_CC=x86_64-elf-gcc --sysroot="sysroot"
 
 override IMAGE_NAME := spectraos
+export HEADERSDIR=$(pwd)/usr/include/
 
 # Convenience macro to reliably declare user overridable variables.
 define DEFAULT_VAR =
@@ -48,14 +49,23 @@ limine:
 	git clone https://github.com/limine-bootloader/limine.git --branch=v5.x-branch-binary --depth=1
 	unset CC; unset CFLAGS; unset CPPFLAGS; unset LDFLAGS; unset LIBS; $(MAKE) -C limine CC="$(HOST_CC)"
 
-.PHONY: kernel libk
+.PHONY: headers kernel libk
 kernel:
 	$(MAKE) -C kernel
 
 libk:
 	$(MAKE) -C libc
 
-$(IMAGE_NAME).iso: limine kernel libk
+headers:
+	mkdir -p sysroot
+	mkdir -p sysroot/usr
+	mkdir -p sysroot/usr/include
+	mkdir -p sysroot/usr/lib
+	mkdir -p sysroot/boot
+	$(MAKE) -C kernel install-headers
+	$(MAKE) -C libc install-headers
+
+$(IMAGE_NAME).iso: headers limine kernel libk
 	rm -rf iso_root
 	mkdir -p iso_root
 	cp -v kernel/kernel.elf \
@@ -85,6 +95,7 @@ $(IMAGE_NAME).hdd: limine kernel
 .PHONY: clean
 clean:
 	rm -rf iso_root $(IMAGE_NAME).iso $(IMAGE_NAME).hdd
+	rm -rf sysroot
 	$(MAKE) -C kernel clean
 	$(MAKE) -C libc clean
 

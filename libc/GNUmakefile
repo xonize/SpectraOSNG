@@ -74,6 +74,8 @@ override NASMFILES := $(shell find -L . -type f -name '*.asm')
 override OBJ := $(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o)
 override HEADER_DEPS := $(CFILES:.c=.c.d) $(ASFILES:.S=.S.d)
 
+HEADERSDIR?=
+
 CPPFLAGS:=$(CPPFLAGS) -D__is_libc -Iinclude
 LIBK_CFLAGS:=$(CFLAGS) -D__is_libk
 LIBK_CPPFLAGS:=$(CPPFLAGS) -D__is_libk
@@ -85,10 +87,13 @@ LIBK_OBJS:=$(FREEOBJS:.o=.libk.o)
 
 BINARIES=libk.a
 
-.PHONY: all clean
+.PHONY: all clean install-headers
 .SUFFIXES: .o .libk.o .c .S .asm
 
 all: $(BINARIES)
+
+install-headers:
+    cp -R --preserve=timestamps include/. $(HEADERSDIR)
 
 libk.a: $(LIBK_OBJS)
 	$(DEFAULT_AR) rcs $@ $(LIBK_OBJS)
