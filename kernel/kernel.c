@@ -89,7 +89,6 @@ void _start(void) {
      || framebuffer_request.response->framebuffer_count < 1) {
         hcf();
     }
-
     FlushGDT();
 
     // Fetch the first framebuffer.

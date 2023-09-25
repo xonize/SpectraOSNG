@@ -11,6 +11,13 @@ uint64_t gdtEntries[7] = {
     0, //0x30 tss high
 };
 
+
+uint16_t KernelCodeSelector = 0x08 | 0;
+uint16_t KernelDataSelector = 0x10 | 0;
+uint16_t UserDataSelector   = 0x18 | 3;
+uint16_t UserCodeSelector   = 0x20 | 3;
+uint16_t TssSelector        = 0x28;
+
 typedef struct __attribute__((aligned (8))) __attribute__((__packed__)) gdtr{
     uint16_t limit;
     uint64_t base;
@@ -26,6 +33,7 @@ void FlushGDT() {
         mov %%ax, %%ss; \
         mov %%ax, %%es; \
         mov %%ax, %%fs; \
+        mov %%ax, %%gs; \
         pop %%rdi; \
         push %1; \
         push %%rdi; \
