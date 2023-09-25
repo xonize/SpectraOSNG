@@ -4,6 +4,7 @@
 #include <tty.h>
 #include <kernel/test.h>
 #include <logo.h>
+#include <arch/x86_64/gdt.h>
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
@@ -88,6 +89,8 @@ void _start(void) {
      || framebuffer_request.response->framebuffer_count < 1) {
         hcf();
     }
+
+    FlushGDT();
 
     // Fetch the first framebuffer.
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
