@@ -1,10 +1,6 @@
 #include <stdint.h>
 #include <tty.h>
 
-
-extern char vector_0_handler[];
-extern char vector_1_handler[];
-
 struct interrupt_descriptor {
     uint16_t address_low;
     uint16_t selector;
@@ -62,14 +58,11 @@ void load_idt(void* idt_addr) {
     asm volatile("lidt %0" :: "m"(idt_reg));
 }
 
-#define V "vector_"
-#define H "_handler"
-#define IDTExpansion(n) "vector_" #n "_handler"
-
 void init_idt() {
-    // todo: change i in loop
-    for (int i = 0; i < 2; i++){
-        set_idt_entry(i, (uint64_t)IDTExpansion(i) + (i * 16), 0);
+    for (int i = 0; i < 256; i++) {
+        // calculates positions in memory based on offset from vector_0 because all are consecutive aligned to 16
+        extern char vector_0_handler[];
+        set_idt_entry(i, (uint64_t)vector_0_handler + (i * 16), 0);
     }
     load_idt(&idt);
 }
