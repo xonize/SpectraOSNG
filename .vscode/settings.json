@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "logo.h": "c"
+        "logo.h": "c",
+        "cpuid.h": "c"
     }
 }

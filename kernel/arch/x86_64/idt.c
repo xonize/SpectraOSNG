@@ -1,10 +1,6 @@
 #include <stdint.h>
 #include <tty.h>
 
-
-extern char vector_0_handler[];
-extern char vector_1_handler[];
-
 struct interrupt_descriptor {
     uint16_t address_low;
     uint16_t selector;
@@ -62,14 +58,11 @@ void load_idt(void* idt_addr) {
     asm volatile("lidt %0" :: "m"(idt_reg));
 }
 
-#define V "vector_"
-#define H "_handler"
-#define IDTExpansion(n) "vector_" #n "_handler"
-
 void init_idt() {
-    // todo: change i in loop
-    for (int i = 0; i < 2; i++){
-        set_idt_entry(i, (uint64_t)IDTExpansion(i) + (i * 16), 0);
+    extern char vector_0_handler[];
+    for (int i = 0; i < 1; i++) {
+        // calculates positions in memory based on offset from vector_0 because all are consecutive aligned to 16
+        set_idt_entry(i, (uint64_t)vector_0_handler + (i * 16), 0);
     }
     load_idt(&idt);
 }
@@ -78,14 +71,45 @@ void interrupt_dispatch(struct cpu_status_t* context)
 {
     switch (context->vector_number)
     {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+        case 8:
+            break;
+        case 9:
+            break;
+        case 10:
+            break;
+        case 11:
+            break;
+        case 12:
+            break;
         case 13:
-            screen_put_pixel(10, 10, 0xff0000);
             break;
         case 14:
-            screen_put_pixel(10, 10, 0x00ff00);
+            break;
+        case 16:
+            break;
+        case 17:
+            break;
+        case 18:
+            break;
+        case 19:
             break;
         default:
-            screen_put_pixel(10, 10, 0x0000ff);
             break;
     }
     return context;
