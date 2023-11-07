@@ -59,9 +59,9 @@ void load_idt(void* idt_addr) {
 }
 
 void init_idt() {
-    for (int i = 0; i < 256; i++) {
+    extern char vector_0_handler[];
+    for (int i = 0; i < 1; i++) {
         // calculates positions in memory based on offset from vector_0 because all are consecutive aligned to 16
-        extern char vector_0_handler[];
         set_idt_entry(i, (uint64_t)vector_0_handler + (i * 16), 0);
     }
     load_idt(&idt);
@@ -71,14 +71,45 @@ void interrupt_dispatch(struct cpu_status_t* context)
 {
     switch (context->vector_number)
     {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+        case 8:
+            break;
+        case 9:
+            break;
+        case 10:
+            break;
+        case 11:
+            break;
+        case 12:
+            break;
         case 13:
-            screen_put_pixel(10, 10, 0xff0000);
             break;
         case 14:
-            screen_put_pixel(10, 10, 0x00ff00);
+            break;
+        case 16:
+            break;
+        case 17:
+            break;
+        case 18:
+            break;
+        case 19:
             break;
         default:
-            screen_put_pixel(10, 10, 0x0000ff);
             break;
     }
     return context;

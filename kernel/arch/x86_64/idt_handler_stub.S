@@ -22,6 +22,7 @@ interrupt_stub:
 
 
 .align 16
+.global vector_0_handler
 vector_0_handler:
     // Vector 0 - #DE Divide by 0. No error code so we push one.
     pushq $0
