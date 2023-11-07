@@ -87,7 +87,8 @@ override NASMFLAGS += \
 override CFILES := $(shell find -L . -type f -name '*.c')
 override ASFILES := $(shell find -L . -type f -name '*.S')
 override NASMFILES := $(shell find -L . -type f -name '*.asm')
-override OBJ := $(ASFILES:.S=.S.o) $(CFILES:.c=.c.o) $(NASMFILES:.asm=.asm.o) $(shell find -L . -type f -name 'font.o')
+override CLEANOBJ := $(ASFILES:.S=.S.o) $(CFILES:.c=.c.o) $(NASMFILES:.asm=.asm.o)
+override OBJ := $(CLEANOBJ) $(shell find -L . -type f -name 'font.o')
 override HEADER_DEPS := $(CFILES:.c=.c.d) $(ASFILES:.S=.S.d)
 
 
@@ -124,7 +125,7 @@ $(KERNEL): GNUmakefile linker.ld $(OBJ)
 # Remove object files and the final executable.
 .PHONY: clean
 clean:
-	rm -rf $(KERNEL) $(OBJ) $(HEADER_DEPS)
+	rm -rf $(KERNEL) $(CLEANOBJ) $(HEADER_DEPS)
 
 .PHONY: distclean
 distclean: clean
