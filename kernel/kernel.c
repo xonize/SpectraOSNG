@@ -7,6 +7,8 @@
 #include <logo.h>
 #include <arch/x86_64/gdt.h>
 #include <arch/x86_64/idt.h>
+#include <test.h>
+// #include <qemu/output.h>
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
@@ -92,7 +94,7 @@ int isLongMode(void) {
 // If renaming _start() to something else, make sure to change the
 // linker script accordingly.
 void _start(void) {
-    if (!isLongMode) {
+    if (!isLongMode()) {
         hcf();
     }
     // Ensure we got a framebuffer.
@@ -116,6 +118,8 @@ void _start(void) {
     screen_init(framebuffer->address, framebuffer->width, framebuffer->height, framebuffer->pitch, framebuffer->bpp, 0); // type wtf?!
     screen_draw_img(logo_header_data, 920, 508);                    // this seems to work in pixels
     screen_write_string("SpectraOS", 82, 24, 0xffffff, 0x000000);   // but this works in characters or something similar. why?
+    // set_up_serial_port();
+    // qemu_puts("Booted.");
 
     // We're done, just hang...
     hcf();

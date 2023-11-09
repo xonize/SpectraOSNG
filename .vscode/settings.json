@@ -3,6 +3,7 @@
         "logo.h": "c",
         "cpuid.h": "c",
         "idt.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "serial.h": "c"
     }
 }

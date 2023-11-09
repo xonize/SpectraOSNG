@@ -67,10 +67,10 @@ void init_idt() {
     load_idt(&idt);
 }
 
-void interrupt_dispatch(struct cpu_status_t* context)
-{
-    switch (context->vector_number)
-    {
+void interrupt_dispatch(struct cpu_status_t* context) {
+    // TODO: implement qemu serial output on interrupt
+    // also fix comp error
+    switch (context->vector_number) {
         case 0:
             break;
         case 1:
