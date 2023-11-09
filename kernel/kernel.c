@@ -7,7 +7,6 @@
 #include <logo.h>
 #include <arch/x86_64/gdt.h>
 #include <arch/x86_64/idt.h>
-#include <test.h>
 #include <qemu/output.h>
 
 // The Limine requests can be placed anywhere, but it is important that
@@ -94,9 +93,8 @@ int isLongMode(void) {
 // If renaming _start() to something else, make sure to change the
 // linker script accordingly.
 void _start(void) {
-    if (!isLongMode) {
-        hcf();
-    }
+    // dont need to check for long mode because limine protocol does it automatically
+    
     // Ensure we got a framebuffer.
     if (framebuffer_request.response == NULL
      || framebuffer_request.response->framebuffer_count < 1) {
