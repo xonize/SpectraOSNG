@@ -1,5 +1,6 @@
 #include <qemu/output.h>
 #include <stdint.h>
+#include <serial/serial.h>
 
 void set_up_serial_port(void) {
     outb(0x3F8 + 1, 0x00);

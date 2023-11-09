@@ -57,7 +57,7 @@ override CFLAGS += \
     -mno-mmx \
     -mno-sse \
     -mno-sse2 \
-    -mno-red-zone
+    -mno-red-zone 
 
 # Internal C preprocessor flags that should not be changed by the user.
 override CPPFLAGS := \
@@ -68,14 +68,15 @@ override CPPFLAGS := \
 
 # Internal linker flags that should not be changed by the user.
 override LDFLAGS += \
-    -m elf_x86_64 \
     -nostdlib \
     -static \
     -pie \
-    --no-dynamic-linker \
     -z text \
     -z max-page-size=0x1000 \
     -T linker.ld
+
+    # -m elf_x86_64 \
+    # --no-dynamic-linker \
 
 # Internal nasm flags that should not be changed by the user.
 override NASMFLAGS += \
@@ -105,7 +106,7 @@ limine.h:
 
 # Link rules for the final kernel executable.
 $(KERNEL): GNUmakefile linker.ld $(OBJ)
-	$(LD) $(OBJ) $(LDFLAGS) -o $@
+	$(CC) $(OBJ) $(LDFLAGS) -o $@ -lk -lgcc
 
 # Include header dependencies.
 -include $(HEADER_DEPS)

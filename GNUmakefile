@@ -5,7 +5,7 @@ export SP_SYSROOT=$(shell pwd)/sysroot
 override IMAGE_NAME := spectraos
 export HEADERSDIR=$(SP_SYSROOT)/usr/include/
 export LIBSDIR=$(SP_SYSROOT)/usr/lib/
-export INCDIR=/usr/include
+export INCDIR=/usr/include/
 
 export OS_CC=x86_64-elf-gcc --sysroot=$(SP_SYSROOT) -isystem=$(INCDIR)
 
@@ -74,7 +74,7 @@ i-libs:
 	$(MAKE) -C libc install-libs
 
 
-$(IMAGE_NAME).iso: headers limine kernel libk i-libs
+$(IMAGE_NAME).iso: headers limine libk i-libs kernel
 	rm -rf iso_root
 	mkdir -p iso_root
 	cp -v kernel/kernel.elf \
