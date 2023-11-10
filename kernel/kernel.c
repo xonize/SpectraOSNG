@@ -3,12 +3,12 @@
 #include <stddef.h>
 #include <limine.h>
 #include <tty.h>
-#include <kernel/test.h>
 #include <logo.h>
 #include <arch/x86_64/gdt.h>
 #include <arch/x86_64/idt.h>
 #include <qemu/output.h>
 #include <string.h>
+#include <arch/x86_64/pic.h>
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
@@ -46,9 +46,13 @@ void _start(void) {
     }
     FlushGDT();
     init_idt();
+    remap_pic();
+    set_up_serial_port();
+    qemu_puts("Loaded GDT and IDT.\n");
 
     // Fetch the first framebuffer.
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
+    qemu_puts("Framebuffer fetched.\n");
 
     // Note: we assume the framebuffer model is RGB with 32-bit pixels.
     // if (HELLO) {
@@ -57,12 +61,14 @@ void _start(void) {
     //     fb_ptr[i * (framebuffer->pitch / 4) + i] = 0xffffff;
     // }
     // }
+    
     screen_init(framebuffer->address, framebuffer->width, framebuffer->height, framebuffer->pitch, framebuffer->bpp, 0); // type wtf?!
     screen_draw_img(logo_header_data, 920, 508);                    // this seems to work in pixels
     screen_write_string("SpectraOS", 82, 24, 0xffffff, 0x000000);   // but this works in characters or something similar. why?
-    set_up_serial_port();
-    qemu_puts("Booted.");
-
+    qemu_puts("Booted.\n");
     // We're done, just hang...
+
+    asm volatile("int $0x3");
+    qemu_puts("test");
     hcf();
 }

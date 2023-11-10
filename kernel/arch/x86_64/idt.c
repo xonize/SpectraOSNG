@@ -1,5 +1,9 @@
 #include <stdint.h>
 #include <tty.h>
+#include <serial/serial.h>
+#include <qemu/output.h>
+#include <stdlib.h>
+#include <arch/x86_64/pic.h>
 
 struct interrupt_descriptor {
     uint16_t address_low;
@@ -20,7 +24,21 @@ struct cpu_status_t
 {
     uint64_t r15;
     uint64_t r14;
-    //other pushed registers
+    uint64_t r13;
+    uint64_t r12;
+    uint64_t r11;
+    uint64_t r10;
+    uint64_t r9;
+    uint64_t r8;
+    
+    uint64_t gs;
+    uint64_t fs;
+
+    uint64_t rsi;
+    uint64_t rdi;
+    uint64_t rbp;
+    uint64_t rdx;
+    uint64_t rcx;
     uint64_t rbx;
     uint64_t rax;
 
@@ -60,7 +78,7 @@ void load_idt(void* idt_addr) {
 
 void init_idt() {
     extern char vector_0_handler[];
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 19; i++) {
         // calculates positions in memory based on offset from vector_0 because all are consecutive aligned to 16
         set_idt_entry(i, (uint64_t)vector_0_handler + (i * 16), 0);
     }
@@ -70,6 +88,11 @@ void init_idt() {
 void interrupt_dispatch(struct cpu_status_t* context) {
     // TODO: implement qemu serial output on interrupt
     // also fix comp error
+    const char* interrupt_number;
+    itoa(context->vector_number, interrupt_number, 10);
+    qemu_puts("Received Interrupt");
+    qemu_puts(interrupt_number);
+    qemu_puts("\n");
     switch (context->vector_number) {
         case 0:
             break;
@@ -112,5 +135,10 @@ void interrupt_dispatch(struct cpu_status_t* context) {
         default:
             break;
     }
+
+    if (context->vector_number >= 0x40) {
+        outb(PIC_COMMAND_SLAVE, PIC_EOI);
+    }
+    outb(PIC_COMMAND_MASTER, PIC_EOI);
     return context;
 }

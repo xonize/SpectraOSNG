@@ -1,9 +1,29 @@
 interrupt_stub:
     push %rax
     push %rbx
-    //push other registers here
+    push %rcx
+    push %rdx
+    push %rbp
+    push %rdi
+    push %rsi
+
+    push %fs
+    push %gs
+
+    push %r8
+    push %r9
+    push %r10
+    push %r11
+    push %r12
+    push %r13
     push %r14
     push %r15
+
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
 
     mov %rsp, %rdi
     call interrupt_dispatch
@@ -11,13 +31,26 @@ interrupt_stub:
 
     pop %r15
     pop %r14
-    //push other registers here
+    pop %r13
+    pop %r12
+    pop %r11
+    pop %r10
+    pop %r9
+    pop %r8
+
+    pop %gs
+    pop %fs
+
+    pop %rsi
+    pop %rdi
+    pop %rbp
+    pop %rdx
+    pop %rcx
     pop %rbx
     pop %rax
 
     //remove the vector number + error code
-    add $16, %rsp
-
+    add $8, %rsp
     iret
 
 

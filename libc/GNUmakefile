@@ -84,6 +84,9 @@ LIBK_CPPFLAGS:=$(CPPFLAGS) -D__is_libk
 FREEOBJS=\
 stdio/printf.o \
 serial/serial.o \
+stdlib/itoa.o \
+string/memfuncs.o \
+string/strrev.o \
 
 LIBK_OBJS:=$(FREEOBJS:.o=.libk.o)
 
