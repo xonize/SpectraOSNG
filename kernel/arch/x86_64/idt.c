@@ -136,7 +136,7 @@ void interrupt_dispatch(struct cpu_status_t* context) {
             break;
     }
 
-    if (context->vector_number >= 0x40) {
+    if (context->vector_number >= 8) {
         outb(PIC_COMMAND_SLAVE, PIC_EOI);
     }
     outb(PIC_COMMAND_MASTER, PIC_EOI);

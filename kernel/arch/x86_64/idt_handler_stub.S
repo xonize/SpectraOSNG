@@ -51,7 +51,7 @@ interrupt_stub:
 
     //remove the vector number + error code
     add $8, %rsp
-    iret
+    iretq
 
 
 .align 16

@@ -9,8 +9,8 @@ void remap_pic(void) {
     outb(PIC_COMMAND_SLAVE, ICW_1);
     outb(PIC_DATA_MASTER, PIC_MASTER_OFFSET);
     outb(PIC_DATA_SLAVE, PIC_SLAVE_OFFSET);
-    outb(PIC_DATA_MASTER, 0x04); // Slave PIC at IQR2?
-    outb(PIC_DATA_SLAVE, 0x02); // Cascade indentity?
+    outb(PIC_DATA_MASTER, 0x04); // tell master that slave is at IRQ2
+    outb(PIC_DATA_SLAVE, 0x02); // Tells slave its cascade identity
     outb(PIC_DATA_MASTER, PIC_MODE_8086);
     outb(PIC_DATA_SLAVE, PIC_MODE_8086);
     outb(PIC_DATA_MASTER, mask1);

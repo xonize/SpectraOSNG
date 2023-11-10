@@ -45,8 +45,10 @@ void _start(void) {
         hcf();
     }
     FlushGDT();
+    // does pic have to be mapped into idt somehow?
     init_idt();
     remap_pic();
+    asm volatile("sti");
     set_up_serial_port();
     qemu_puts("Loaded GDT and IDT.\n");
 
