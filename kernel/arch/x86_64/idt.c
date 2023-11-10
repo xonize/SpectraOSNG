@@ -89,9 +89,9 @@ void interrupt_dispatch(struct cpu_status_t* context) {
     // TODO: implement qemu serial output on interrupt
     // also fix comp error
     const char* interrupt_number;
-    itoa(context->vector_number, interrupt_number, 10);
+    // itoa(context->vector_number, interrupt_number, 10);
     qemu_puts("Received Interrupt");
-    qemu_puts(interrupt_number);
+    // qemu_puts(interrupt_number);
     qemu_puts("\n");
     switch (context->vector_number) {
         case 0:

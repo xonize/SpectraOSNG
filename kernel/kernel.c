@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include <cpuid.h>
 #include <stddef.h>
 #include <limine.h>
@@ -33,6 +34,15 @@ int isLongMode(void) {
     return rdx & bit_LM;
 }
 
+static inline bool are_interrupts_enabled()
+{
+    unsigned long flags;
+    asm volatile ( "pushf\n\t"
+                   "pop %0"
+                   : "=g"(flags) );
+    return flags & (1 << 9);
+}
+
 // The following will be our kernel's entry point.
 // If renaming _start() to something else, make sure to change the
 // linker script accordingly.
@@ -51,6 +61,9 @@ void _start(void) {
     asm volatile("sti");
     set_up_serial_port();
     qemu_puts("Loaded GDT and IDT.\n");
+    if (are_interrupts_enabled()) {
+        qemu_puts("INTERRUPTS ENABLED\n");
+    }
 
     // Fetch the first framebuffer.
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
@@ -70,7 +83,7 @@ void _start(void) {
     qemu_puts("Booted.\n");
     // We're done, just hang...
 
-    asm volatile("int $0x3");
+    asm volatile("int $0x03");
     qemu_puts("test");
     hcf();
 }
