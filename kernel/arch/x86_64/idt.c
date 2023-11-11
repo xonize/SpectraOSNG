@@ -73,12 +73,12 @@ void load_idt(void* idt_addr) {
     struct idtr idt_reg;
     idt_reg.limit = 0xFFF;
     idt_reg.base = (uint64_t)idt_addr;
-    asm volatile("lidt %0" :: "m"(idt_reg));
+    asm volatile("lidt %0" :: "g"(idt_reg));
 }
 
 void init_idt() {
     extern char vector_0_handler[];
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 48; i++) {
         // calculates positions in memory based on offset from vector_0 because all are consecutive aligned to 16
         set_idt_entry(i, (uint64_t)vector_0_handler + (i * 16), 0);
     }
@@ -86,13 +86,7 @@ void init_idt() {
 }
 
 void interrupt_dispatch(struct cpu_status_t* context) {
-    // TODO: implement qemu serial output on interrupt
-    // also fix comp error
-    const char* interrupt_number;
-    // itoa(context->vector_number, interrupt_number, 10);
     qemu_puts("Received Interrupt");
-    // qemu_puts(interrupt_number);
-    qemu_puts("\n");
     switch (context->vector_number) {
         case 0:
             break;
@@ -135,8 +129,9 @@ void interrupt_dispatch(struct cpu_status_t* context) {
         default:
             break;
     }
+    qemu_puts("\n");
 
-    if (context->vector_number >= 8) {
+    if (context->vector_number >= 28) {
         outb(PIC_COMMAND_SLAVE, PIC_EOI);
     }
     outb(PIC_COMMAND_MASTER, PIC_EOI);

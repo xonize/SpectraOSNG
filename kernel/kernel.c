@@ -83,7 +83,7 @@ void _start(void) {
     qemu_puts("Booted.\n");
     // We're done, just hang...
 
-    asm volatile("int $0x03");
+    asm volatile("int $0x00");
     qemu_puts("test");
     hcf();
 }
