@@ -82,8 +82,5 @@ void _start(void) {
     screen_write_string("SpectraOS", 82, 24, 0xffffff, 0x000000);   // but this works in characters or something similar. why?
     qemu_puts("Booted.\n");
     // We're done, just hang...
-
-    asm volatile("int $0x00");
-    qemu_puts("test");
     hcf();
 }

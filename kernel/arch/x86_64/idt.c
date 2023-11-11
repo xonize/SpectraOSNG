@@ -4,6 +4,7 @@
 #include <qemu/output.h>
 #include <stdlib.h>
 #include <arch/x86_64/pic.h>
+#include <arch/x86_64/idt.h>
 
 struct interrupt_descriptor {
     uint16_t address_low;
@@ -88,43 +89,43 @@ void init_idt() {
 void interrupt_dispatch(struct cpu_status_t* context) {
     qemu_puts("Received Interrupt");
     switch (context->vector_number) {
-        case 0:
+        case DIVIDE_ERROR:
             break;
-        case 1:
+        case DEBUG_EXC:
             break;
-        case 2:
+        case NMI_INTERRUPT:
             break;
-        case 3:
+        case BREAKPOINT:
             break;
-        case 4:
+        case OVERFLOW:
             break;
-        case 5:
+        case BOUND_RANGE_EXCEED:
             break;
-        case 6:
+        case INVALID_OPCODE:
             break;
-        case 7:
+        case DEV_NOT_AVL:
             break;
-        case 8:
+        case DOUBLE_FAULT:
             break;
-        case 9:
+        case COPROC_SEG_OVERRUN:
             break;
-        case 10:
+        case INVALID_TSS:
             break;
-        case 11:
+        case SEGMENT_NOT_PRESENT:
             break;
-        case 12:
+        case STACK_SEGMENT_FAULT:
             break;
-        case 13:
+        case GENERAL_PROTECTION:
             break;
-        case 14:
+        case PAGE_FAULT:
             break;
-        case 16:
+        case FLOATING_POINT_ERR:
             break;
-        case 17:
+        case ALIGNMENT_CHECK:
             break;
-        case 18:
+        case MACHINE_CHECK:
             break;
-        case 19:
+        case SIMD_FP_EXC:
             break;
         default:
             break;
