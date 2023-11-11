@@ -54,8 +54,8 @@ limine:
 	git clone https://github.com/limine-bootloader/limine.git --branch=v5.x-branch-binary --depth=1
 	unset CC; unset CFLAGS; unset CPPFLAGS; unset LDFLAGS; unset LIBS; $(MAKE) -C limine CC="$(HOST_CC)"
 
-.PHONY: headers kernel libk i-libs
-kernel:
+.PHONY: headers libk i-libs kernel 
+kernel: headers
 	$(MAKE) -C kernel
 
 libk:

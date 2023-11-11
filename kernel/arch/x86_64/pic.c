@@ -16,3 +16,13 @@ void remap_pic(void) {
     outb(PIC_DATA_MASTER, mask1);
     outb(PIC_DATA_SLAVE, mask2);
 }
+
+void mask_pic(void) {
+    outb(PIC_DATA_MASTER, 0xFF);
+    outb(PIC_DATA_SLAVE, 0xFF);
+}
+
+void disable_pic(void) {
+    remap_pic();
+    mask_pic();
+}
