@@ -3,8 +3,9 @@
 #include <serial/serial.h>
 #include <qemu/output.h>
 #include <stdlib.h>
-#include <arch/x86_64/pic.h>
+#include <arch/x86_64/lapic.h>
 #include <arch/x86_64/idt.h>
+#include <kernel/kernel.h>
 
 struct interrupt_descriptor {
     uint16_t address_low;
@@ -79,10 +80,12 @@ void load_idt(void* idt_addr) {
 
 void init_idt() {
     extern char vector_0_handler[];
+    extern char vector_255_handler[];
     for (int i = 0; i < 48; i++) {
         // calculates positions in memory based on offset from vector_0 because all are consecutive aligned to 16
         set_idt_entry(i, (uint64_t)vector_0_handler + (i * 16), 0);
     }
+    set_idt_entry(255, (uint64_t)vector_255_handler, 0);
     load_idt(&idt);
 }
 
@@ -116,6 +119,7 @@ void interrupt_dispatch(struct cpu_status_t* context) {
         case STACK_SEGMENT_FAULT:
             break;
         case GENERAL_PROTECTION:
+            asm volatile ("hlt");
             break;
         case PAGE_FAULT:
             break;
@@ -127,14 +131,22 @@ void interrupt_dispatch(struct cpu_status_t* context) {
             break;
         case SIMD_FP_EXC:
             break;
+        case APIC_TIMER_INTERRUPT:
+            qemu_puts(" APIC Timer Interrupt");
+            kernel_settings.kernel_uptime++;
+            write_apic_register(0xB0, 0x01); // Write EOI to APIC EOI offset
+            break;
+        case KEYBOARD_INTERRUPT:
+            break;
+        case PIT_INTERRUPT:
+            break;
+        case APIC_SPURIOUS_INTERRUPT:
+            qemu_puts(" APIC Spurious Interrupt");
+            write_apic_register(0xB0, 0x01);
+            break;
         default:
             break;
     }
     qemu_puts("\n");
-
-    if (context->vector_number >= 28) {
-        outb(PIC_COMMAND_SLAVE, PIC_EOI);
-    }
-    outb(PIC_COMMAND_MASTER, PIC_EOI);
     return context;
 }

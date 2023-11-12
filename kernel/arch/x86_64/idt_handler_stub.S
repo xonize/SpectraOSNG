@@ -327,7 +327,7 @@ vector_31_handler:
 
 .align 16
 vector_32_handler:
-    // Vector 32
+    // Vector 32: APIC Timer Interrupt
     cli
     pushq $0
     pushq $32
@@ -335,7 +335,7 @@ vector_32_handler:
 
 .align 16
 vector_33_handler:
-    // Vector 33
+    // Vector 33: Keyboard Interrupt
     cli
     pushq $0
     pushq $33
@@ -343,7 +343,7 @@ vector_33_handler:
 
 .align 16
 vector_34_handler:
-    // Vector 34
+    // Vector 34: PIT Interrupt
     cli
     pushq $0
     pushq $34
@@ -450,5 +450,14 @@ vector_47_handler:
     // Vector 47
     cli
     pushq $0
-    pushq $42
+    pushq $47
+    jmp interrupt_stub
+
+.align 16
+.global vector_255_handler
+vector_255_handler:
+    // Vector 255: APIC Spurious Interrupt
+    cli
+    pushq $0
+    pushq $255
     jmp interrupt_stub

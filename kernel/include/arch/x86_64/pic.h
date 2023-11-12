@@ -18,8 +18,8 @@
 
 
 
-void remap_pic(void);
-void mask_pic(void);
+// void remap_pic(void);
+// void mask_pic(void);
 void disable_pic(void);
 
 #endif

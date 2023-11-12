@@ -9,7 +9,8 @@
 #include <arch/x86_64/idt.h>
 #include <qemu/output.h>
 #include <string.h>
-#include <arch/x86_64/pic.h>
+#include <arch/x86_64/lapic.h>
+#include <kernel/kernel.h>
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
@@ -17,6 +18,11 @@
 
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
+    .revision = 0
+};
+
+static volatile struct limine_hhdm_request hhdm_request = {
+    .id = LIMINE_HHDM_REQUEST,
     .revision = 0
 };
 
@@ -43,6 +49,13 @@ static inline bool are_interrupts_enabled()
     return flags & (1 << 9);
 }
 
+kernel_settings_t kernel_settings;
+
+void init_kernel_settings(uint64_t hhdm_offset) {
+    kernel_settings.hhdm_offset = hhdm_offset;
+    kernel_settings.kernel_uptime = 01;
+}
+
 // The following will be our kernel's entry point.
 // If renaming _start() to something else, make sure to change the
 // linker script accordingly.
@@ -54,10 +67,16 @@ void _start(void) {
      || framebuffer_request.response->framebuffer_count < 1) {
         hcf();
     }
+
+    // ensure we get a HHDM response
+    if (hhdm_request.response == NULL) {
+        hcf();
+    }  
+    init_kernel_settings(hhdm_request.response->offset);
+
     FlushGDT();
-    // does pic have to be mapped into idt somehow?
     init_idt();
-    remap_pic();
+    init_lapic();
     asm volatile("sti");
     set_up_serial_port();
     qemu_puts("Loaded GDT and IDT.\n");

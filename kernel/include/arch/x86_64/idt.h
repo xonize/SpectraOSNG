@@ -24,6 +24,12 @@
 #define MACHINE_CHECK 18
 #define SIMD_FP_EXC 19
 
+#define APIC_TIMER_INTERRUPT 32
+#define KEYBOARD_INTERRUPT 33
+#define PIT_INTERRUPT 34
+
+#define APIC_SPURIOUS_INTERRUPT 255
+
 void init_idt();
 
 #endif
